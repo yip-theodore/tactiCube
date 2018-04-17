@@ -1,0 +1,154 @@
+* {
+    box-sizing: border-box;
+}
+.container,
+.playground,
+.tile,
+.face {
+    transform-style: preserve-3d;    
+}
+:root {
+    --size: 3vw;
+    --width: 20;
+    --height: 20;
+}
+.body {
+    background-color: #fbfbfb;
+}
+.container {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    overflow: visible;
+    transform: rotateX(60deg) rotateY(0deg) rotateZ(45deg) scale(1);
+}
+.container.editmode {
+    transform: rotateX(0) rotateY(0) rotateZ(0) scale(.8);
+    top: 10%;
+    left: 25%;
+}
+.container.editmode .tile {
+    cursor: pointer;
+}
+
+.tile {
+    --color: #f5f5f5;
+}
+.tile[class*='move'] {
+    cursor: pointer;
+}
+.tile[class*='move']:hover {
+    --color: rgba(0,0,0,.2);
+}
+.move0 {
+    --color: rgba(255,50,50,.2);
+}
+.move1 {
+    --color: rgba(0,200,255,.2);
+}
+.move2 {
+    --color: rgba(100,255,50,.2);
+}
+.move3 {
+    --color: rgba(255,231,50,.2);
+}
+.tile {
+    --width: var(--size);
+    --height: var(--size);
+
+    position: absolute;
+    width: var(--width);
+    height: var(--height);
+    background: var(--color);
+
+    transform: scale(.9);
+}
+
+/* CUBE */
+
+.cube {
+    --width: var(--size);
+    --height: var(--size);
+    --depth: var(--size);
+    --color: rgba(0,0,0,.1);
+
+    position: absolute;
+    width: var(--size);
+    height: var(--size);
+    transform-origin: center;
+    background-color: rgba(0,0,0,.1);
+}
+
+.player {
+    --width: calc(var(--size) /2 );
+    --height: calc(var(--size) /2 );
+    --depth: calc(var(--size) /2 );
+    
+    background-color: var(--colorL);
+    
+}
+.player .face {
+    top: calc(var(--size) / 4 );
+    left: calc(var(--size) / 4 );
+}
+
+.p0 {
+    --color: rgba(255,50,50,.6);
+    --colorL: rgba(255,50,50,.2);
+}
+.p1 {
+    --color: rgba(0,200,255,.6);
+    --colorL: rgba(0,200,255,.2);
+}
+.p2 {
+    --color: rgba(100, 255, 50, .6);
+    --colorL: rgba(100, 255, 50, .2);
+}
+.p3 {
+    --color: rgba(255,231,50,.6);
+    --colorL: rgba(255,231,50,.2);
+}
+.bloc {
+    --color: rgba(200,200,200,.6);
+    /* --width: calc(var(--size) /2 ); */
+    /* --height: calc(var(--size) /2 ); */
+    --depth: calc(var(--size) / 3);
+}
+
+.cube .face {
+    position: absolute;
+    background: var(--color);
+    border: 1px solid var(--color);
+}
+.cube .face.top, .cube .face.bottom {
+    width: var(--width);
+    height: var(--height);
+}
+.cube .face.frontLeft, .cube .face.backLeft {
+    width: var(--width);
+    height: var(--depth);
+}
+.cube .face.frontRight, .cube .face.backRight {
+    width: var(--height);
+    height: var(--depth);
+}
+.cube .face.top {
+    transform: translateZ(var(--depth));
+}
+.cube .face.frontLeft {
+    transform: translateY(calc(var(--height) - var(--depth)/2)) translateZ(calc(var(--depth) / 2)) rotateX(-90deg);
+}
+.cube .face.frontRight {
+    transform: translateX(calc(var(--width) - var(--height)/2)) translateY(calc(var(--height)/2 - var(--depth)/2)) translateZ(calc(var(--depth)/2)) rotateX(-90deg) rotateY(90deg);
+}
+.cube .face.bottom {
+    transform: initial;
+}
+.cube .face.backRight {
+    transform: translateY(calc(-1 * var(--depth) / 2)) translateZ(calc( var(--depth) / 2)) rotateX(-90deg);
+}
+.cube .face.backLeft {
+    transform: translateX(calc(-1 * var(--height) / 2)) translateY(calc((var(--height) / 2) + (-1 * var(--depth) / 2))) translateZ(calc(var(--depth) / 2)) rotateX(-90deg) rotateY(90deg);
+}
