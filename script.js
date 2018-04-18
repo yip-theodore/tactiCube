@@ -11,13 +11,15 @@ function init() {
   // go chercher les variables CSS
   getCssVar()
   function getCssVar() {
+    // et les convertit en variable JS (c'est un peu inutile mais bon c cool a savoir)
     rootStyles = getComputedStyle(document.querySelector(':root'))
     
-    // et les convertit en variable JS (c'est un peu inutile mais bon c cool a savoir)
+    // size
     rootSize = rootStyles.getPropertyValue('--size').trim();
     size = parseInt(rootSize)
     sizeUnit = rootSize.replace(size, '')
     
+    // width, height
     rootWidth = rootStyles.getPropertyValue('--width')
     rootHeight = rootStyles.getPropertyValue('--height')
   }
@@ -25,24 +27,27 @@ function init() {
   initLocalStorage()  
   function initLocalStorage() {
     try {
+      // on va eller voir ce qu'il y a de deja stocké
       localStorage = window.localStorage.getItem('bloc')
+      // si y'a rien (ex: la 1ere fois)
       if (!localStorage) {
         // disposition des blocs par default
         localStorage = '[{"x":0,"y":0},{"x":1,"y":0},{"x":2,"y":0},{"x":0,"y":1},{"x":0,"y":2},{"x":1,"y":2},{"x":3,"y":0},{"x":2,"y":1},{"x":2,"y":2},{"x":0,"y":4},{"x":1,"y":4},{"x":2,"y":4},{"x":3,"y":4},{"x":0,"y":6},{"x":1,"y":6},{"x":0,"y":5},{"x":2,"y":5},{"x":3,"y":6},{"x":0,"y":8},{"x":1,"y":8},{"x":2,"y":8},{"x":3,"y":8},{"x":3,"y":9},{"x":3,"y":10},{"x":1,"y":9},{"x":0,"y":10},{"x":0,"y":9},{"x":0,"y":12},{"x":0,"y":13},{"x":0,"y":14},{"x":3,"y":14},{"x":3,"y":12},{"x":2,"y":14},{"x":3,"y":13},{"x":1,"y":12},{"x":1,"y":13},{"x":0,"y":16},{"x":0,"y":17},{"x":0,"y":18},{"x":1,"y":16},{"x":1,"y":17},{"x":3,"y":18},{"x":3,"y":16},{"x":3,"y":17},{"x":2,"y":18},{"x":5,"y":0},{"x":5,"y":1},{"x":5,"y":2},{"x":6,"y":0},{"x":7,"y":0},{"x":7,"y":1},{"x":8,"y":2},{"x":8,"y":0},{"x":7,"y":2},{"x":6,"y":2},{"x":5,"y":4},{"x":6,"y":4},{"x":7,"y":4},{"x":8,"y":4},{"x":8,"y":5},{"x":8,"y":6},{"x":5,"y":7},{"x":5,"y":8},{"x":5,"y":9},{"x":5,"y":13},{"x":5,"y":14},{"x":5,"y":15},{"x":6,"y":14},{"x":7,"y":14},{"x":8,"y":14},{"x":5,"y":17},{"x":5,"y":18},{"x":5,"y":19},{"x":6,"y":17},{"x":8,"y":17},{"x":7,"y":17},{"x":8,"y":19},{"x":8,"y":18},{"x":7,"y":19},{"x":6,"y":19},{"x":10,"y":0},{"x":10,"y":1},{"x":10,"y":2},{"x":11,"y":0},{"x":12,"y":0},{"x":13,"y":0},{"x":13,"y":1},{"x":13,"y":2},{"x":11,"y":1},{"x":11,"y":4},{"x":12,"y":4},{"x":10,"y":4},{"x":13,"y":4},{"x":13,"y":5},{"x":12,"y":6},{"x":11,"y":6},{"x":10,"y":5},{"x":10,"y":8},{"x":10,"y":9},{"x":10,"y":10},{"x":11,"y":9},{"x":12,"y":9},{"x":13,"y":8},{"x":13,"y":9},{"x":13,"y":10},{"x":6,"y":8},{"x":7,"y":8},{"x":8,"y":8},{"x":10,"y":12},{"x":10,"y":13},{"x":10,"y":14},{"x":11,"y":13},{"x":12,"y":13},{"x":13,"y":13},{"x":16,"y":19},{"x":17,"y":19},{"x":18,"y":19},{"x":19,"y":18},{"x":15,"y":19},{"x":14,"y":18},{"x":15,"y":16},{"x":15,"y":15},{"x":18,"y":15},{"x":18,"y":16}]'
+        // on push
         window.localStorage.setItem('bloc', localStorage)
       }
     }catch (error) {
-      // ca marche pas sur safari :(
+      // ca marche pas sur safari :( (update: en fait si)
       document.body.innerHTML = "Sorry, it doesn't seem to work there. <br> Try it on another browser !"
     }
   }
 
-
   // ! on initialise le dom virtuel
   initZone()
   function initZone() {
-    // lui c le dom virtuel (je crois que ca s'appelle comme ca)
+    // `zone` c le dom virtuel (je crois que ca s'appelle comme ca)
     zone = []
+    // on genere notre tableau (on ajoute juste le `x`, `y` et `b` bloc ou pas)
     for (let i = 0; i < rootHeight; i++) {
       let line = []
       for (let j = 0; j < rootWidth; j++) {
@@ -50,33 +55,45 @@ function init() {
           x: j,
           y: i,
           p: '',
-          // met `true` ou `false` en allant voir dans le localStorage
+          // met `true` ou `false` en allant voir dans localStorage
           b: localStorage.indexOf(`{"x":${j},"y":${i}}`) !== -1,
           move: null
         })
       }
       zone.push(line)
     }
+    // apres on a zone = [
+    //    [ {x,y,p,b,move}, {..}, {..}, .. ],
+    //    [ {..}, {..}, {..}, .. ],
+    //    [ {..}, {..}, {..}, .. ],
+    //    ..
+    // ]
   }
 
-  // ! le premier Render (on creer les tuiles et on rajoute les blocs gris)
+  // ! on fait un 1er render (on ajoute les tuiles et les blocs)
   initRender()
   function initRender() {
+    // on met l'element racine dans une variable
     playground = document.querySelector('.playground')  
     playground.innerHTML = ""
+
     for (let i = 0; i < zone.length; i++) {
       for (let j = 0; j < zone[i].length; j++) {
         
         let tile = document.createElement('div')
         tile.className = 'tile'
 
+        // la c pour les plasser (les tuiles sont en absolute)
         tile.style.top = (size*j) + sizeUnit
         tile.style.left = (size*i) + sizeUnit
 
+        // on leur met des 6 divs (pour creer un cube eventuellement plus tard)
         tile.innerHTML = `<div class="face top"></div> <div class="face frontLeft"></div> <div class="face frontRight"></div> <div class="face bottom"></div> <div class="face backRight"></div> <div class="face backLeft"></div>`
       
+        // et quelques data
         tile.dataset.info = JSON.stringify({x: j, y: i})
         
+        // et les blocs
         if (zone[i][j].b) {
           tile.classList.add('cube', 'bloc')
         }
@@ -84,6 +101,7 @@ function init() {
         playground.appendChild(tile)
       }
     }
+    // la pareil, on stocke le dom, on en aura besoin plus tard
     tiles = document.querySelectorAll('.tile')
     faces = document.querySelectorAll('.face')  
   }
@@ -92,6 +110,7 @@ function init() {
 
 // ! les petits gens, on les met dans un tableau
 const p = [
+  // (nom: 'pX'), (position: {x, y}), (stats: {pv, atk, steps})
   new Player('p0', randPos('p0'), {pv: 10, atk: 3, steps: 4}),
   new Player('p1', randPos('p1'), {pv: 10, atk: 2, steps: 4}),
   new Player('p2', randPos('p2'), {pv: 10, atk: 2, steps: 4}),
@@ -101,6 +120,7 @@ const p = [
 // `z` il stocke c le tour de qui
 let z = 0
 
+// ! on demarre le jeu, updateZone(anim=false, first=true, wasediting=false)
 updateZone(false, true)
 
 // ! dedans y'a tous les trucs liés au joueurs
@@ -217,7 +237,7 @@ function Player (name, pos, stats) {
 
 // ! fait avancer le jeu
 function updateZone(anim, first, wasediting) {
-
+  // on clear tout
   if (!first) {
     // enleve les `p` et les `move` du dom virtuel
     clearZone()
@@ -225,7 +245,7 @@ function updateZone(anim, first, wasediting) {
     clearRender()
   }
 
-  // passe au prochain joueur
+  // on passe au prochain
   !first && !anim && !wasediting && nextPlayer()
   
   // remet tout le monde dans le dom virtuel
@@ -236,7 +256,7 @@ function updateZone(anim, first, wasediting) {
   // cherche les possibilites de deplacement, puis les rajoutent dans le dom virtuel
   !anim && p[z].pathFinder()
   
-  // render tout
+  // render tout  d ' < ' b
   render(anim)
 }
 
@@ -252,7 +272,7 @@ function clearZone() {
   }
 }
 
-// enleve les classes, les ecouteurs et les dataset
+// enleve les classes, les ecouteurs et les dataset du dom
 function clearRender() {
   for (let i = 0; i < zone.length; i++) {
     for (let j = 0; j < zone[i].length; j++) {
@@ -270,9 +290,8 @@ function clearRender() {
   }
 }
 
-// ! affiche les trucs en fonction du dom virtuel
+// ! on prend le dom virtuel, on le met dans le dom
 function render(anim) {
-  // console.log('render');
   
   for (let i = 0; i < zone.length; i++) {
     for (let j = 0; j < zone[i].length; j++) {
@@ -282,15 +301,16 @@ function render(anim) {
       // affiche les joueurs
       if (zone[i][j].p) {
         tile.classList.add('cube', 'player')
+        // ex: 'p2'
         tile.classList.add(zone[i][j].p)
-        // avant ca servait, plus mtn (mais bon ptetre plus tard)
         if (zone[i][j].p === p[z].name) {
           tile.classList.add('playing')
         }
       }
 
-      // affiche les zones on on peut aller
-      if (!anim && !zone[i][j].b && zone[i][j].move) {
+      // si on est pas en anim, tu peux 
+      if (!anim && zone[i][j].move) {
+        // afficher les zones ou on peut aller
         tile.classList.add('move'+z)
         // et ajoute un ecouteur
         tile.addEventListener('click', p[z].move)
@@ -315,21 +335,17 @@ function initEdit() {
     if (event.which !== 18) {
       return
     }
-  
     // au 1er ALT
     if (!playground.parentElement.classList.contains('editmode')) {
       playground.parentElement.classList.add('editmode')
-      console.log('edit mode');
-
+      // activation
       editStart()
     } else {
       // au 2eme
       playground.parentElement.classList.remove('editmode')
-      console.log('normal mode');
-
+      // desactivation
       editStop()
     }
-  
   })
   
   function editStart() {
@@ -382,10 +398,13 @@ function initEdit() {
 function randPos(player) {
   let randX, randY
   do {
-   randX = Math.floor(Math.random() * rootWidth)
-   randY = Math.floor(Math.random() * rootHeight)
+    randX = Math.floor(Math.random() * rootWidth)
+    randY = Math.floor(Math.random() * rootHeight)
+    // mais pas dans un bloc ou dans qqn
   } while (zone[randY][randX].b || zone[randY][randX].p);
   
+  // on update le dom virtuel
   zone[randY][randX].p = player
+  // on return les coordonnees
   return {x: randX, y: randY}
 }

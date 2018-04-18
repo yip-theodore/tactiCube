@@ -1,11 +1,14 @@
+/* GLOBAL */
 * {
     box-sizing: border-box;
 }
 .container,
 .playground,
 .tile,
+.cube,
 .face {
-    transform-style: preserve-3d;    
+    transform-style: preserve-3d; 
+    position: absolute;
 }
 :root {
     --size: 3vw;
@@ -15,8 +18,9 @@
 .body {
     background-color: #fbfbfb;
 }
+
+/* CONTAINER */
 .container {
-    position: absolute;
     top: 25%;
     left: 50%;
     width: 0;
@@ -33,92 +37,72 @@
     cursor: pointer;
 }
 
+/* TILES */
 .tile {
-    --color: #f5f5f5;
+    --colorT: #f5f5f5;
+    --width: var(--size);
+    --height: var(--size);
+
+    width: var(--width);
+    height: var(--height);
+    background: var(--colorT);
+    transform: scale(.9);
+}
+.move0,
+.p0 {
+    --color: rgba(232, 65, 24,.6);
+    --colorT: rgba(232, 65, 24,.3);
+}
+.move1,
+.p1 {
+    --color: rgba(0, 168, 255,.6);
+    --colorT: rgba(0, 168, 255,.3);
+}
+.move2,
+.p2 {
+    --color: rgba(76, 209, 55,.6);
+    --colorT: rgba(76, 209, 55,.3);
+}
+.move3,
+.p3 {
+    --color:rgba(251, 197, 49,.6);
+    --colorT: rgba(251, 197, 49,.3);
 }
 .tile[class*='move'] {
     cursor: pointer;
 }
 .tile[class*='move']:hover {
-    --color: rgba(0,0,0,.2);
-}
-.move0 {
-    --color: rgba(255,50,50,.2);
-}
-.move1 {
-    --color: rgba(0,200,255,.2);
-}
-.move2 {
-    --color: rgba(100,255,50,.2);
-}
-.move3 {
-    --color: rgba(255,231,50,.2);
-}
-.tile {
-    --width: var(--size);
-    --height: var(--size);
-
-    position: absolute;
-    width: var(--width);
-    height: var(--height);
-    background: var(--color);
-
-    transform: scale(.9);
+    --colorT: var(--color);
 }
 
-/* CUBE */
-
+/* CUBES */
 .cube {
     --width: var(--size);
     --height: var(--size);
     --depth: var(--size);
-    --color: rgba(0,0,0,.1);
 
-    position: absolute;
     width: var(--size);
     height: var(--size);
     transform-origin: center;
-    background-color: rgba(0,0,0,.1);
+    background-color: var(--colorT);
 }
-
 .player {
     --width: calc(var(--size) /2 );
     --height: calc(var(--size) /2 );
     --depth: calc(var(--size) /2 );
-    
-    background-color: var(--colorL);
-    
 }
+.bloc {
+    --color: rgba(200,200,200,.6);
+    --colorL: rgba(200,200,200,.6);
+    --depth: calc(var(--size) / 3);
+}
+
+/* FACES */
 .player .face {
     top: calc(var(--size) / 4 );
     left: calc(var(--size) / 4 );
 }
-
-.p0 {
-    --color: rgba(255,50,50,.6);
-    --colorL: rgba(255,50,50,.2);
-}
-.p1 {
-    --color: rgba(0,200,255,.6);
-    --colorL: rgba(0,200,255,.2);
-}
-.p2 {
-    --color: rgba(100, 255, 50, .6);
-    --colorL: rgba(100, 255, 50, .2);
-}
-.p3 {
-    --color: rgba(255,231,50,.6);
-    --colorL: rgba(255,231,50,.2);
-}
-.bloc {
-    --color: rgba(200,200,200,.6);
-    /* --width: calc(var(--size) /2 ); */
-    /* --height: calc(var(--size) /2 ); */
-    --depth: calc(var(--size) / 3);
-}
-
 .cube .face {
-    position: absolute;
     background: var(--color);
     border: 1px solid var(--color);
 }
