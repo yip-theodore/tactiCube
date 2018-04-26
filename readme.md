@@ -1,4 +1,4 @@
-# [![TactiCube](tacticube.gif)](https://yip-theodore.github.io/tactiCube/)
+# [![TactiCube](tacticube.gif)](https://yip-theodore.github.io/tactiCube)
 
 *TactiCube* is multiplayer board game.
 
